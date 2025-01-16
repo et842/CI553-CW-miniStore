@@ -9,9 +9,8 @@ import java.io.Serializable;
  * @version 2.0
  */
 
-public class Product implements Serializable
+public class Product 
 {
-  private static final long serialVersionUID = 20092506;
   private String theProductNum;       // Product number
   private String theDescription;      // Description of product
   private double thePrice;            // Price of product
