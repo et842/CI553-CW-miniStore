@@ -14,6 +14,8 @@ import middle.StockReader;
 
 import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // There can only be 1 ResultSet opened per statement
 // so no simultaneous use of the statement object
@@ -171,5 +173,37 @@ public class StockR implements StockReader
     //DEBUG.trace( "DB StockR: getImage -> %s", filename );
     return new ImageIcon( filename );
   }
+  
+  
+  /**
+   * Searches for products based on a keyword in their description.
+   * @param keyword The keyword to search for.
+   * @return A list of products matching the keyword.
+   * @throws StockException If an error occurs during the search.
+   */
+  @Override
+  public synchronized List<Product> searchByKeyword(String keyword) throws StockException {
+      List<Product> results = new ArrayList<>();
+      String query = "SELECT ProductTable.productNo, description, price, stockLevel " +
+                     "FROM ProductTable " +
+                     "INNER JOIN StockTable ON ProductTable.productNo = StockTable.productNo " +
+                     "WHERE description LIKE ?";
+      try (PreparedStatement stmt = getConnectionObject().prepareStatement(query)) {
+          stmt.setString(1, "%" + keyword + "%");
+          ResultSet rs = stmt.executeQuery();
+          while (rs.next()) {
+              results.add(new Product(
+                  rs.getString("productNo"),
+                  rs.getString("description"),
+                  rs.getDouble("price"),
+                  rs.getInt("stockLevel")
+              ));
+          }
+      } catch (SQLException e) {
+          throw new StockException("SQL searchByKeyword: " + e.getMessage());
+      }
+      return results;
+  }
+
 
 }

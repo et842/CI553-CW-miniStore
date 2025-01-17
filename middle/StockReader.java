@@ -2,6 +2,8 @@ package middle;
 
 import catalogue.Product;
 
+import java.util.List;
+
 import javax.swing.*;
 
 /**
@@ -39,4 +41,13 @@ public interface StockReader
    */
   
   ImageIcon getImage(String pNum) throws StockException;
+  
+  /**
+   * Searches for products based on a keyword in their description.
+   * @param keyword The keyword to search for.
+   * @return A list of products matching the keyword.
+   * @throws StockException If an error occurs during the search.
+   */
+  List<Product> searchByKeyword(String keyword) throws StockException;
+
 }
